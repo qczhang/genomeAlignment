@@ -115,14 +115,13 @@ sub init
     mkdir ( "$parameters{outputDir}/psl" ) if ( not -e "$parameters{outputDir}/psl" );
 
     if ( defined $opt_l ) { $parameters{logFile} = $opt_l; }
-    else { $parameters{logFile} = "doLastz.log"; }
+    else { $parameters{logFile} = "$parameters{outputDir}/doLastz.log"; }
     if ( defined $opt_m ) { $parameters{matrix} = $opt_m; }
-    else { $parameters{matrix} = "/home/qczhang/work/genomeAlignment/human_chimp.v2.q"; }
+    else { $parameters{matrix} = "$ENV{GENOMEALIGN}/data/default.q"; }
     if ( defined $opt_p ) { $parameters{lastzOptions} = $opt_p; }
-    else { $parameters{lastzOptions} = "B=0 C=0 E=30 H=2000 K=2200 L=4000 M=50 O=400 T=1 Y=3400"; }
-    # mouse 
-    # my $lastzOptions = "Q=$parameters{matrix} B=0 C=0 E=150 H=0 K=4500 L=1000 M=254 O=600 T=2 Y=15000";
-    #my $lastzOptions = "Q=$parameters{matrix} B=0 C=0 E=30 H=0 K=3000 L=3000 M=40M O=400 T=1 Y=9400";
+    else { $parameters{lastzOptions} = ""; }
+    # my $lastzOptions = "Q=$parameters{matrix} E=150 H=0 K=4500 L=1000 M=254 O=600 T=2 Y=15000";
+    #my $lastzOptions = "Q=$parameters{matrix} E=30 H=0 K=3000 L=3000 M=40 O=400 T=1 Y=9400";
     if ( defined $opt_r ) { 
         $parameters{remote} = 1; 
         mkdir ( "$parameters{outputDir}/lastz_shell" ) if ( not -e "$parameters{outputDir}/lastz_shell" );
@@ -139,9 +138,9 @@ sub readFastaList {
     open ( LIST, $listFile ) or die "Cannot open $listFile for reading!\n";
     while ( my $line = <LIST> ) {
         next if ( $line =~ /^#/ );
+        #if ( defined $parameters{skip} ) { next if ( $line =~ /$parameters{skip}/ ); }
         chomp $line;
 
-        if ( defined $parameters{skip} ) { next if ( $line =~ /$parameters{skip}/ ); }
         my ( $name, $file, @fields ) = split ( /\t/, $line );
         #$name = "chr" . $name if ( $name !~ /chr/ );
         $fasta{$name} = $file;
