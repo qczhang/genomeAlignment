@@ -5,15 +5,16 @@ use warnings;
 
 my $genome = shift;
 my $outputDir = shift;
+if ( not $genome ) { die "Usage: $0 genome <outputDir>\n"; }
 
 my $writeChr = 0;
 if ( $outputDir ) {
     if ( not -e $outputDir ) { print STDERR `mkdir $outputDir`; }
     if ( ( -e $outputDir ) and ( -w $outputDir ) ) { $writeChr = 1; }
-    else { print STDERR "cannot open $outputDir for writing! will not output fasta files.\n"; }
+    else { print STDERR "Cannot open $outputDir for writing! will not output fasta files.\n"; }
 }
 
-my $count = 0; my $chr = ""; my $len = 0;  my $first = 1;
+my $count = 0; my $chr = ""; my $len = 0;  my $first = 1;  my $outFile = "NULL";
 open ( GN, $genome );
 while ( my $line = <GN> ) {
     $count++;
@@ -30,7 +31,8 @@ while ( my $line = <GN> ) {
                 close OUT;
                 $first = 0;
             }
-            my $outFile = $outputDir . "/" . $chr . ".fa";
+            $outFile = $outputDir . "/" . $chr . ".fa";
+            print STDERR $chr, "\t", $outFile, "\n";
             open ( OUT, ">$outFile" );
             print OUT $line;
         }
