@@ -54,13 +54,22 @@ sub main
     &checkForGenome2Bit ();
     &checkForChrAndSize ();
     if ( $_debug ) { foreach my $key ( keys %config ) { print $key, "\t", $config{$key}, "\n"; }  }
-    exit;
 
-    #  set parameters and do lastz
+    print STDERR "$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n";
+    print STDERR `$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n`;
 
-    #  if successful, set parameters and continue to chainning
-    #  if successful, set parameters and continue to netting
-    #
+    if ( not $? ) {
+        print STDERR "$config{SCRIPTS}/chainning.pl -i $config{genomeSize1} -1 $config{genomeTwoBit1} -2 $config{genomeTwoBit2} -d $config{outDir}/psl -o $config{outDir} -a $config{UCSC_TOOLS}/axtChain -p $config{AXTCHAINOPT} -t $config{UCSC_TOOLS}/chainAntiRepeat\n";
+        print STDERR `$config{SCRIPTS}/chainning.pl -i $config{genomeSize1} -1 $config{genomeTwoBit1} -2 $config{genomeTwoBit2} -d $config{outDir}/psl -o $config{outDir} -a $config{UCSC_TOOLS}/axtChain -p $config{AXTCHAINOPT} -t $config{UCSC_TOOLS}/chainAntiRepeat`;
+    }
+    else { die "Error in finishing lastz jobs\n"; }
+
+    if ( not $? ) {
+        print STDERR "$config{SCRIPTS}/netting.pl -1 $config{genomeSize1} -2 $config{genomeSize2} -d $config{outDir}/chain -o $config{outDir} -m $config{UCSC_TOOLS}/chainMergeSort -p $config{UCSC_TOOLS}/chainPreNet -n $config{UCSC_TOOLS}/chainNet -s $config{UCSC_TOOLS}/netSyntenic -c $config{UCSC_TOOLS}/netChainSubset -t $config{UCSC_TOOLS}/chainStitchId\n";
+        print STDERR `$config{SCRIPTS}/netting.pl -1 $config{genomeSize1} -2 $config{genomeSize2} -d $config{outDir}/chain -o $config{outDir} -m $config{UCSC_TOOLS}/chainMergeSort -p $config{UCSC_TOOLS}/chainPreNet -n $config{UCSC_TOOLS}/chainNet -s $config{UCSC_TOOLS}/netSyntenic -c $config{UCSC_TOOLS}/netChainSubset -t $config{UCSC_TOOLS}/chainStitchId`;
+    }
+    else { die "Error in chainning\n"; }
+
     1;
 }
 
@@ -76,11 +85,10 @@ sub init
     if ( defined $opt_c ) { $configFile = $opt_c; }
     else {
         $configFile = ".config";
-        if ( not -e $configFile ) { if ( defined $ENV{"ICSHAPE"} ) { $configFile = $ENV{"ICSHAPE"} . "/.config"; } }
+        if ( not -e $configFile ) { if ( defined $ENV{"GENOMEALIGN"} ) { $configFile = $ENV{"GENOMEALIGN"} . "/.config"; } }
     }
 
     &config_pipeline ( $configFile );
-
     $config{list1} = $opt_1 if ( defined $opt_1 );
     $config{list2} = $opt_2 if ( defined $opt_2 );
     $config{genomeFasta1} = $opt_a if ( defined $opt_a );
@@ -114,7 +122,8 @@ sub config_pipeline
 {
     my $configFile = shift;
 
-    open ( CONFIG, $configFile ) or ( die "Cannot configure pipeline to run!\n" );
+    open ( CONFIG, $configFile ) or ( die "Error in openning configuration file $configFile\n\t...cannot configure pipeline to run!\n" );
+    print STDERR "Configure pipeline from $configFile\n";
     while ( my $line = <CONFIG> ) {
         next if ( $line =~ /^#/ );
         chomp $line;

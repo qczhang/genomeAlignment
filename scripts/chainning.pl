@@ -6,35 +6,32 @@
 use strict;
 use warnings;
 use Getopt::Std;
-use File::Basename;
 
-use lib "/home/qczhang/lib/perllib";
-use Locale::Schedule::Simple qw( &remoteCommand );
-
-use vars qw ($opt_h $opt_V $opt_D $opt_i $opt_d $opt_1 $opt_2 $opt_o $opt_p $opt_l );
-&getopts('hVDi:1:2:d:o:p:l:');
-
-my $axtChainBin = "/srv/gs1/software/ucsc_tools/2.7.2/bin/x86_64/axtChain";
-my $chainAntiRepeatBin = "/srv/gs1/software/ucsc_tools/2.7.2/bin/x86_64/chainAntiRepeat";
+use vars qw ($opt_h $opt_V $opt_D $opt_i $opt_d $opt_1 $opt_2 $opt_o $opt_p $opt_l $opt_a $opt_t $opt_r );
+&getopts('hVDi:1:2:d:o:p:l:a:t:r');
 
 my $usage = <<_EOH_;
 Chain psl alignments into net files
 
 Command:
-$0 -i target_list -1 target_2bit -2 query_2bit -o output_directory
+$0 -i target_list -1 target_2bit -2 query_2bit -d psl_directory -o output_directory
 
 # what it is:
  -i   target list
  -1   target 2bit file
  -2   query 2bit file
+ -d   directory of target alignment psl files
  -o   output directory of chain file
 
 # more options
+ -a   axtChain binary
  -p   options in running axtChain
- -d   directory of target alignment psl files
+ -t   chainAntiRepeat binary
+
+ -r   running in remote (not yet)
 
 # example
- ./chainning.pl -i ~/lib/fasta/hg19.sizes -1 ~/lib/fasta/hg19.2bit -2 ~/lib/fasta/panTro4.2bit -o results/hg19_pt4/ -d results/hg19_pt4/psl/
+ ./chainning.pl -i ~/lib/fasta/hg19.sizes -1 ~/lib/fasta/hg19.2bit -2 ~/lib/fasta/panTro4.2bit -d results/hg19_pt4/psl/ -o results/hg19_pt4/
 
 _EOH_
     ;
@@ -45,7 +42,6 @@ sub main
 {
     my ( %parameters ) = &init();
 
-    #my $ref_targetList = readFastaList ( $parameters{targetList}, skip => "_" );
     my $ref_targetList = readFastaList ( $parameters{targetList} );
 
     open ( LOG, ">$parameters{logFile}" );
@@ -53,8 +49,8 @@ sub main
         my $inputLav = $parameters{pslDir} . "/" . $targetName . ".psl";
         my $outputChain = $parameters{outputDir} . "/chain/" . $targetName . ".chain";
         my $chainningCmd = "cat $inputLav";
-        $chainningCmd .= " | $axtChainBin $parameters{axtChainOptions} stdin $parameters{target2bit} $parameters{query2bit} stdout";
-        $chainningCmd .= " | $chainAntiRepeatBin $parameters{target2bit} $parameters{query2bit} stdin $outputChain\n";
+        $chainningCmd .= " | $parameters{axtChainBin} $parameters{axtChainOptions} stdin $parameters{target2bit} $parameters{query2bit} stdout";
+        $chainningCmd .= " | $parameters{chainAntiRepeatBin} $parameters{target2bit} $parameters{query2bit} stdin $outputChain\n";
 
         if ( not $parameters{remote} ) {
             print LOG "\n$chainningCmd\n\tTime: ", `date`;
@@ -77,24 +73,36 @@ sub main
 
 sub init 
 {
-    die $usage if ( $opt_h or ( not $opt_i ) or ( not $opt_1 ) or ( not $opt_2 ) or ( not $opt_o ) );
+    die $usage if ( $opt_h or ( not $opt_i ) or ( not $opt_1 ) or ( not $opt_2 ) or ( not $opt_o ) or ( not $opt_d ) );
 
     my %parameters = ();
 
     $parameters{targetList} = $opt_i;
-    $parameters{outputDir} = $opt_o;
-    mkdir ( $parameters{outputDir} ) if ( not -e $parameters{outputDir} );
-    mkdir ( "$parameters{outputDir}/chain" ) if ( not -e "$parameters{outputDir}/chain" );
     $parameters{target2bit} = $opt_1;
     $parameters{query2bit} = $opt_2;
 
-    if ( defined $opt_l ) { $parameters{logFile} = $opt_l; }
-    else { $parameters{logFile} = "chainning.log"; }
+    $parameters{pslDir} = $opt_d;
+    $parameters{outputDir} = $opt_o;
+    mkdir ( $parameters{outputDir} ) if ( not -e $parameters{outputDir} );
+    mkdir ( "$parameters{outputDir}/chain" ) if ( not -e "$parameters{outputDir}/chain" );
+
+    if ( defined $opt_a ) { $parameters{axtChainBin} = $opt_a; }
+    else { $parameters{axtChainBin} = "axtChain";  } ## check availability of binary axtChain
+    if ( defined $opt_t ) { $parameters{chainAntiRepeatBin} = $opt_t; }
+    else { $parameters{chainAntiRepeatBin} = "chainAntiRepeat";  } ## check availability of binary chainAntiRepeat
+
     if ( defined $opt_p ) { $parameters{axtChainOptions} = $opt_p; }
-    else { $parameters{axtChainOptions} = "-psl -verbose-0 -minScore=5000 -linearGap=medium"; }
-    if ( defined $opt_d ) { $parameters{pslDir} = $opt_d; }
-    $parameters{remote} = 0;
-    #mkdir ( "$parameters{outputDir}/chainning_shell" ) if ( not -e "$parameters{outputDir}/chainning_shell" );
+
+    if ( defined $opt_l ) { $parameters{logFile} = $opt_l; }
+    else { $parameters{logFile} = "$parameters{outputDir}/chainning.log"; }
+
+    if ( defined $opt_r ) { 
+        $parameters{remote} = 1; 
+        mkdir ( "$parameters{outputDir}/chainning_shell" ) if ( not -e "$parameters{outputDir}/chainning_shell" );
+
+        $parameters{remote} = 0; 
+        print STDERR `echo "not yet implemented. still running in local" > $parameters{outputDir}/chainning_shell/note`;
+    }
 
     return ( %parameters );
 }
