@@ -1,0 +1,13 @@
+## went through UCSC website and collect
+##sp1	sp2	chain_min	linearGap_matrix
+hg	panTro	5000	medium
+hg	mm	3000	medium
+dm	anoGam	3000	loose
+dm	droGri	3000	loose
+dm	droMoj	3000	loose
+dm	droYak	3000	loose
+dm	droVir	3000	loose
+dm	droWil	3000	loose
+dm	droSim	3000	loose
+dm	droEre	3000	loose
+

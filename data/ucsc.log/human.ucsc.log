@@ -1,0 +1,100 @@
+query	abridged repeats(no)	M(0)	K(3000)	L(3000)	Q	Y(9400)	program run	E(30)	H(0)	O(400)	T(1)	chain	table date	%	of	hg38 matched (chainLink	table)	%	of	query matched (chainLinkHg38)
+Chimp panTro4	no	254	4500	3000	human_chimp.v2.q	15000	1.03.52/lastz	150	2000	600	2	2014-05-27	93.112%	95.664%
+Gorilla gorGor3	no	254	3000	3000	hg38.gorGor3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-15	88.005%	91.695%
+Orangutan ponAbe2	no	254	4500	3000	human_chimp.v2.q	15000	1.03.52/lastz	150	2000	600	2	2014-09-02	89.187%	89.656%
+Gibbon nomLeu3	no	254	3000	3000	hg38.nomLeu3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-12	86.379%	90.470%
+Crab-eating macaque	macFas5	no	254	3000	3000	hg38.macFas5.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-14	85.675%	87.749%
+Rhesus rheMac3	no	254	4500	3000	human_chimp.v2.q	15000	1.03.52/lastz	150	2000	600	2	2014-01-28	79.729%	86.715%
+Baboon papAnu2	no	254	3000	3000	hg38.papAnu2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-13	84.179%	84.502%
+Squirrel monkey	saiBol1	no	254	3000	3000	hg38.saiBol1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-13	70.565%	81.466%
+Green monkey	chlSab2	no	254	4500	3000	human_chimp.v2.q	15000	1.03.52/lastz	150	2000	600	2	2014-07-11	84.393%	88.264%
+Marmoset calJac3	no	254	3000	3000	hg38.calJac3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-13	71.709%	76.757%
+Aardvark oryAfe1	no	50	3000	3000	hg38.oryAfe1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	36.526%	30.701%
+Bushbaby otoGar3	no	254	3000	3000	hg38.otoGar3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2014-12-13	49.485%	60.561%
+White rhinoceros	cerSim1	no	50	3000	3000	hg38.cerSim1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	53.075%	64.822%
+Cape golden	mole	chrAsi1	no	50	3000	3000	hg38.chrAsi1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	29.208%	25.571%
+Big brown	bat	eptFus1	no	50	3000	3000	hg38.eptFus1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	36.386%	58.072%
+Chinese tree	shrew	tupChi1	no	50	3000	3000	hg38.tupChi1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-10	37.022%	41.180%
+Horse equCab2	no	50	3000	3000	hg38.equCab2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	52.083%	62.447%
+Bactrian camel	camFer1	no	50	3000	3000	hg38.camFer1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	46.206%	67.274%
+Alpaca vicPac2	no	50	3000	3000	hg38.vicPac2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	45.887%	64.565%
+Dolphin turTru2	no	50	3000	3000	hg38.turTru2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	46.072%	56.998%
+Dog canFam3	no	0	3000	3000	default	9400	1.03.52/lastz	30	2000	400	1	2014-01-27	49.978%	60.083%
+Killer whale	orcOrc1	no	50	3000	3000	hg38.orcOrc1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-11	47.281%	60.190%
+Squirrel speTri2	no	50	3000	3000	hg38.speTri2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-10	44.729%	57.271%
+Black flying-fox	pteAle1	no	50	3000	3000	hg38.pteAle1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	45.612%	N/A
+Pig susScr3	no	50	3000	3000	hg38.susScr3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	41.326%	N/A
+Elephant loxAfr3	no	50	3000	3000	hg38.loxAfr3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	41.904%	39.143%
+Naked mole-rat	hetGla2	no	50	3000	3000	hg38.hetGla2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-11	42.315%	54.061%
+Megabat pteVam1	no	50	3000	3000	hg38.pteVam1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-11	41.012%	65.155%
+Cat felCat8	no	50	3000	3000	hg38.felCat8.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	47.700%	N/A
+Panda ailMel1	no	50	3000	3000	hg38.ailMel1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	48.226%	61.650%
+Ferret musFur1	no	50	3000	3000	hg38.musFur1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	45.782%	N/A
+Guinea pig	cavPor3	no	50	3000	3000	hg38.cavPor3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-11	37.901%	42.902%
+Armadillo dasNov3	no	50	3000	3000	hg38.dasNov3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-11	42.233%	38.915%
+Rabbit oryCun2	no	50	3000	3000	hg38.oryCun2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	38.631%	43.643%
+Tibetan antelope	panHod1	no	50	3000	3000	hg38.panHod1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	41.357%	47.712%
+Weddell seal	lepWed1	no	50	3000	3000	hg38.lepWed1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	47.437%	61.113%
+Pacific walrus	odoRosDiv1	no	50	3000	3000	hg38.odoRosDiv1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	47.985%	59.858%
+David's myotis	(bat)	myoDav1	no	50	3000	3000	hg38.myoDav1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-12	34.892%	N/A
+Cow bosTau8	no	254	3000	3000	default	9400	lastz	30	2000	400	1	2014-10-16	45.975%	50.440%
+Domestic goat	capHir1	no	50	3000	3000	hg38.capHir1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	in	progress	in	progress	N/A
+Sheep oviAri3	no	254	3000	3000	hg38.oviAri3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-01-21	41.193%	47.075%
+Microbat myoLuc2	no	50	3000	3000	hg38.myoLuc2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-12	35.148%	N/A
+Cape elephant	shrew	eleEdw1	no	50	3000	3000	hg38.eleEdw1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	in	progress	in	progress	N/A
+Manatee triMan1	no	50	3000	3000	hg38.triMan1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	in	progress	in	progress	N/A
+Lesser Egyptian	jerboa	jacJac1	no	50	3000	3000	hg38.jacJac1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	27.899%	N/A
+Chinchilla chiLan1	no	50	3000	3000	hg38.chiLan1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	40.808%	N/A
+Star-nosed mole	conCri1	no	50	3000	3000	hg38.conCri1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	in	progress	in	progress	N/A
+Brush-tailed rat	octDeg1	no	50	3000	3000	hg38.octDeg1.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	2015-02-12	35.827%	N/A
+Pika ochPri3	no	50	3000	3000	hg38.ochPri3.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	1	in	progress	in	progress	N/A
+Hedgehog eriEur2	no	50	3000	3000	hg38.eriEur2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-12	21.643%	N/A
+Tenrec echTel2	no	50	3000	3000	hg38.echTel2.tuning.Q.txt	3400	1.03.54/lastz	30	2000	400	2	2015-02-12	27.550%	N/A
+Mouse mm10	no	0	3000	3000	default	9400	1.03.52/lastz	30	2000	400	1	2014-01-25	31.629%	35.323%
+Rat rn6	TBD
+Chinese hamster	criGri1	TBD
+Golden hamster	mesAur1	TBD
+Prairie vole	micOch1	TBD
+Shrew sorAra2	TBD
+Wallaby macEug2	TBD
+Opossum monDom5	no	50	2200	6000	HoxD55.q	3400	1.03.52/lastz	30	2000	400	1	2014-05-29	14.370%	11.996%
+Tasmanian devil	sarHar1	TBD
+Spiny softshell	turtle	apaSpi1	TBD
+Green seaturtle	cheMyd1	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	6.296%	7.960%
+Painted turtle	chrPic2	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	6.708%	8.554%
+Chinese softshell	turtle	pelSin1	TBD
+Platypus ornAna1	TBD
+American alligator	allMis1	TBD
+Rock pigeon	colLiv1	TBD
+Chicken galGal4	TBD
+Lizard anoCar2	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	3.593%	5.222%
+Mallard duck	anaPla1	TBD
+Turkey melGal1	TBD
+Saker falcon	falChe1	TBD
+Peregrine falcon	falPer1	TBD
+Parrot amaVit1	TBD
+Scarlet Macaw	araMac1	TBD
+Tibetan ground	jay	pseHum1	TBD
+Budgerigar melUnd1	TBD
+Collared flycatcher	ficAlb2	TBD
+White-throated sparrow	zonAlb1	TBD
+Medium ground	finch	geoFor1	TBD
+Zebra finch	taeGut2	TBD
+Spotted gar	lepOcu1	TBD
+X. tropicalis	xenTro7	TBD
+Coelacanth latCha1	TBD
+Atlantic cod	gadMor1	TBD
+Stickleback gasAcu1	TBD
+Nile tilapia	oreNil2	TBD
+Tetraodon tetNig2	TBD
+Princess of	Burundi	neoBri1	TBD
+Yellowbelly pufferfish	takFla1	TBD
+Burton's mouthbreeder	hapBur1	TBD
+Fugu fr3	TBD
+Mexican tetra	(cavefish)	astMex1	TBD
+Lamprey petMar2	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	1.265%	3.960%
+Zebrafish danRer10	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-08	3.357%	7.110%
+Zebra Mbuna	mayZeb1	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-07	1.805%	6.780%
+Pundamilia nyererei	punNye1	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	1.787%	6.864%
+Medaka oryLat2	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	2.002%	6.853%
+Southern platyfish	xipMac1	no	50	2200	6000	HoxD55.q	3400	1.03.54/lastz	30	2000	400	1	2015-02-06	1.898%	7.435%

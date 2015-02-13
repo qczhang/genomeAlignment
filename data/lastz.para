@@ -1,0 +1,12 @@
+## went through UCSC website and collect
+##O: gap open penalty
+# E: gap extension penalty
+# K: minimum score for an alignment to be kept for the first pass
+# and L for the second pass, which restricted the search space to the regions between two alignments found in the first pass. 
+# H: minimum score for alignments to be interpolated between
+hg	panTro	matrix=human-chimp.v2	O=600	E=150	K=4500	L=3000	H=2000	M=254	T=2	Y=15000
+hg	mm	matrix=default	O=400	E=30	K=3000	L=3000	H=2000	M=0	T=1	Y=9400
+dm	droGri	matrix=HoxD55	O=400	E=30	K=2200	L=4000	H=2000	M=0	T=1	Y=3400
+dm	droVir	matrix=HoxD55	O=400	E=30	K=2200	L=4000	H=2000	M=0	T=1	Y=3400
+dm	droWil	matrix=HoxD55	O=400	E=30	K=2200	L=4000	H=2000	M=0	T=1	Y=3400
+
