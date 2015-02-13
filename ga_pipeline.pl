@@ -50,73 +50,12 @@ sub main
     &init ();
     if ( $_debug ) { foreach my $key ( keys %config ) { print $key, "\t", $config{$key}, "\n"; }  }
 
-    ## check the input format, check whether genome fa files are available, if not generate them
-    if ( defined $config{list1} ) { 
-        if ( not defined $config{genomeFasta1} ) { 
-            my $tmptFile = $config{outDir} . "/data/genome1.fa";
-            $config{genomeFasta1} = mergeFastaList ( $config{list1}, $tmptFile ); 
-        } 
-    }
-    if ( defined $config{list2} ) { 
-        if ( not defined $config{genomeFasta2} ) { 
-            my $tmptFile = $config{outDir} . "/data/genome2.fa";
-            $config{genomeFasta2} = mergeFastaList ( $config{list2}, $tmptFile ); 
-        } 
-    }
-
-    if ( defined $config{genomeTwobit1} ) { 
-        if ( not defined $config{genomeFasta1} ) { 
-            $config{genomeFasta1} = $config{outDir} . "/data/genome1.fa";
-            print STDERR `$config{UCSC_TOOLS}/twoBitToFa $config{genomeTwobit1} $config{genomeFasta1}`; 
-        } 
-    }
-    if ( defined $config{genomeTwobit2} ) { 
-        if ( not defined $config{genomeFasta2} ) { 
-            $config{genomeFasta2} = $config{outDir} . "/data/genome2.fa";
-            print STDERR `$config{UCSC_TOOLS}/twoBitToFa $config{genomeTwobit2} $config{genomeFasta2}`; 
-        } 
-    }
-
-    #  check whether chromsome files are available, if not generate them
-    my $tmpSize = $config{outDir} . "/data/genome1.tmp.sizes";
-    if ( not defined $config{list1} ) { 
-        $config{list1} = $config{outDir} . "/data/genome1.lst";
-        print STDERR `echo "genome	$config{genomeFasta1}" > $config{list1}`;
-        print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta1} $config{outDir}/data/genome1 1> $tmpSize 2>> $config{list1}`; 
-    } 
-    if ( not defined $config{genomeSize1} ) {
-        if ( -e $tmpSize ) { $config{genomeSize1} = $tmpSize; }
-        else {
-            print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta1} 1> $tmpSize`; 
-            if ( -e $tmpSize ) { $config{genomeSize1} = $tmpSize; }
-        }
-    }
-    $tmpSize = $config{outDir} . "/data/genome2.tmp.sizes";
-    if ( not defined $config{list2} ) { 
-        $config{list2} = $config{outDir} . "/data/genome2.lst";
-        print STDERR `echo "genome	$config{genomeFasta2}" > $config{list2}`;
-        print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta2} $config{outDir}/data/genome2 1> $tmpSize 2>> $config{list2}`; 
-    } 
-    if ( not defined $config{genomeSize2} ) {
-        if ( -e $tmpSize ) { $config{genomeSize2} = $tmpSize; }
-        else {
-            print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta2} 1> $tmpSize`; 
-            if ( -e $tmpSize ) { $config{genomeSize2} = $tmpSize; }
-        }
-    }
-
-    ## check the input format, check whether genome 2bit files are available, if not generate them
-    if ( not defined $config{genomeTwoBit1} ) { 
-        $config{genomeTwoBit1} = $config{outDir} . "/data/genome1.2bit";
-        print STDERR `$config{UCSC_TOOLS}/faToTwoBit $config{genomeFasta1} $config{genomeTwoBit1}`;
-    } 
-    if ( not defined $config{genomeTwoBit2} ) { 
-        $config{genomeTwoBit2} = $config{outDir} . "/data/genome2.2bit";
-        print STDERR `$config{UCSC_TOOLS}/faToTwoBit $config{genomeFasta2} $config{genomeTwoBit2}`;
-    } 
-
+    &checkForGenomeFasta ();
+    &checkForGenome2Bit ();
+    &checkForChrAndSize ();
     if ( $_debug ) { foreach my $key ( keys %config ) { print $key, "\t", $config{$key}, "\n"; }  }
     exit;
+
     #  set parameters and do lastz
 
     #  if successful, set parameters and continue to chainning
@@ -127,7 +66,8 @@ sub main
 
 sub init
 {
-    die $usage if ( $opt_h || ( ( ( not defined $opt_1 ) || ( not defined $opt_2 ) ) and ( ( not defined $opt_a ) || ( not defined $opt_b ) ) and ( ( not defined $opt_A ) || ( not defined $opt_B ) ) ) );
+    die $usage if ( $opt_h or 
+        ( ( ( not defined $opt_1 ) or ( not defined $opt_2 ) ) and ( ( not defined $opt_a ) or ( not defined $opt_b ) ) and ( ( not defined $opt_A ) or ( not defined $opt_B ) ) ) );
     $opt_V = 0 if ( not defined $opt_V );
     $opt_D = 0 if ( not defined $opt_D );
 
@@ -189,6 +129,84 @@ sub config_pipeline
     1;
 }
 
+sub checkForGenomeFasta
+{
+    if ( defined $config{list1} ) { 
+        if ( not defined $config{genomeFasta1} ) { 
+            my $tmptFile = $config{outDir} . "/data/genome1.fa";
+            $config{genomeFasta1} = mergeFastaList ( $config{list1}, $tmptFile ); 
+        } 
+    }
+    if ( defined $config{list2} ) { 
+        if ( not defined $config{genomeFasta2} ) { 
+            my $tmptFile = $config{outDir} . "/data/genome2.fa";
+            $config{genomeFasta2} = mergeFastaList ( $config{list2}, $tmptFile ); 
+        } 
+    }
+
+    if ( defined $config{genomeTwobit1} ) { 
+        if ( not defined $config{genomeFasta1} ) { 
+            $config{genomeFasta1} = $config{outDir} . "/data/genome1.fa";
+            print STDERR `$config{UCSC_TOOLS}/twoBitToFa $config{genomeTwobit1} $config{genomeFasta1}`; 
+        } 
+    }
+    if ( defined $config{genomeTwobit2} ) { 
+        if ( not defined $config{genomeFasta2} ) { 
+            $config{genomeFasta2} = $config{outDir} . "/data/genome2.fa";
+            print STDERR `$config{UCSC_TOOLS}/twoBitToFa $config{genomeTwobit2} $config{genomeFasta2}`; 
+        } 
+    }
+
+    1;
+}
+
+sub checkForChrAndSize
+{
+    my $tmpSize = $config{outDir} . "/data/genome1.tmp.sizes";
+    if ( not defined $config{list1} ) { 
+        $config{list1} = $config{outDir} . "/data/genome1.lst";
+        print STDERR `echo "genome	$config{genomeFasta1}" > $config{list1}`;
+        print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta1} $config{outDir}/data/genome1 1> $tmpSize 2>> $config{list1}`; 
+    } 
+    if ( not defined $config{genomeSize1} ) {
+        if ( -e $tmpSize ) { $config{genomeSize1} = $tmpSize; }
+        else {
+            print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta1} 1> $tmpSize`; 
+            if ( -e $tmpSize ) { $config{genomeSize1} = $tmpSize; }
+        }
+    }
+
+    $tmpSize = $config{outDir} . "/data/genome2.tmp.sizes";
+    if ( not defined $config{list2} ) { 
+        $config{list2} = $config{outDir} . "/data/genome2.lst";
+        print STDERR `echo "genome	$config{genomeFasta2}" > $config{list2}`;
+        print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta2} $config{outDir}/data/genome2 1> $tmpSize 2>> $config{list2}`; 
+    } 
+    if ( not defined $config{genomeSize2} ) {
+        if ( -e $tmpSize ) { $config{genomeSize2} = $tmpSize; }
+        else {
+            print STDERR `$config{SCRIPTS}/getChr.pl $config{genomeFasta2} 1> $tmpSize`; 
+            if ( -e $tmpSize ) { $config{genomeSize2} = $tmpSize; }
+        }
+    }
+
+    1;
+}
+
+sub checkForGenome2bit
+{
+    if ( not defined $config{genomeTwoBit1} ) { 
+        $config{genomeTwoBit1} = $config{outDir} . "/data/genome1.2bit";
+        print STDERR `$config{UCSC_TOOLS}/faToTwoBit $config{genomeFasta1} $config{genomeTwoBit1}`;
+    } 
+    if ( not defined $config{genomeTwoBit2} ) { 
+        $config{genomeTwoBit2} = $config{outDir} . "/data/genome2.2bit";
+        print STDERR `$config{UCSC_TOOLS}/faToTwoBit $config{genomeFasta2} $config{genomeTwoBit2}`;
+    } 
+
+    1;
+}
+
 sub mergeFastaList 
 {
     my $listFile = shift;
@@ -218,3 +236,5 @@ sub mergeFastaList
 
     return $genomeFile;
 }
+
+
