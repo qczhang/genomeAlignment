@@ -46,9 +46,9 @@ sub main
 
     open ( LOG, ">$parameters{logFile}" );
     foreach my $targetName ( keys ( %{$ref_targetList} ) ) {
-        my $inputLav = $parameters{pslDir} . "/" . $targetName . ".psl";
+        my $inputPsl = $parameters{pslDir} . "/" . $targetName . ".psl";
         my $outputChain = $parameters{outputDir} . "/chain/" . $targetName . ".chain";
-        my $chainningCmd = "cat $inputLav";
+        my $chainningCmd = "cat $inputPsl";
         $chainningCmd .= " | $parameters{axtChainBin} $parameters{axtChainOptions} stdin $parameters{target2bit} $parameters{query2bit} stdout";
         $chainningCmd .= " | $parameters{chainAntiRepeatBin} $parameters{target2bit} $parameters{query2bit} stdin $outputChain\n";
 

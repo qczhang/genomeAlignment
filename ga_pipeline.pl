@@ -1,12 +1,11 @@
 #! /usr/bin/perl
-# wrapper of icSHAPE pipeline
+# wrapper of genome alignment pipeline
 # copy right qiangfeng.zhang@gmail.com
 # history: 0.01 
-#   date: 01/06/2015
+#   date: 01/13/2015
 
 use strict;
 use warnings;
-use File::Basename;
 use Getopt::Std;
 
 my $_debug = 1;
@@ -85,7 +84,7 @@ sub init
     if ( defined $opt_c ) { $configFile = $opt_c; }
     else {
         $configFile = ".config";
-        if ( not -e $configFile ) { if ( defined $ENV{"GENOMEALIGN"} ) { $configFile = $ENV{"GENOMEALIGN"} . "/.config"; } }
+        if ( not -e $configFile ) { if ( defined $ENV{"GENOMEALIGNMENT"} ) { $configFile = $ENV{"GENOMEALIGNMENT"} . "/.config"; } }
     }
 
     &config_pipeline ( $configFile );
@@ -130,7 +129,6 @@ sub config_pipeline
 
         my ( $key, $value ) = ( $line =~ /^(\S+)\s+(.+)$/ );
         $value =~ s/^\s+//; $value =~ s/\s+$//;
-        $value =~ s/^"//; $value =~ s/"$//;
         $config{$key} = $value;
     }
     close CONFIG;
