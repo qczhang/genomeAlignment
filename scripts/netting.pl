@@ -7,8 +7,8 @@ use strict;
 use warnings;
 use Getopt::Std;
 
-use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_d $opt_o $opt_m $opt_p $opt_n $opt_s $opt_c $opt_t $opt_l );
-&getopts('hVD1:2:d:o:m:p:n:s:c:t:l:');
+use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_d $opt_o $opt_m $opt_p $opt_n $opt_s $opt_c $opt_t $opt_l $opt_a );
+&getopts('hVD1:2:d:o:m:p:n:s:c:t:l:a:');
 
 my $usage = <<_EOH_;
 Chain psl alignments into net files
@@ -33,6 +33,8 @@ $0 -1 target -2 query -d chain_directory -o output_dir
  -c   netChainSubset binary
  -t   chainStitchId binary
 
+ -a   input all chain file
+
 # example
 ./netting.pl -1 ~/lib/fasta/hg19.sizes -2 ~/lib/fasta/panTro4.sizes -d results/hg19_pt4/chain/ -o results/hg19_pt4/
 
@@ -45,13 +47,16 @@ sub main
 {
     my %parameters = &init();
 
-    my $allChainFile = "$parameters{outDir}/all.chain";
     open ( LOG, ">$parameters{logFile}" );
-    print STDERR "collect all chain files...\n";
-    print LOG "collect all chain files...\n";
-    print LOG "find $parameters{chainDir} -name \"*.chain\" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile\n";
-    print STDERR `find $parameters{chainDir} -name "*.chain" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile`;
-    die ( "$allChainFile does not exist. Chainning not succesful?\n" ) if ( ( not -e $allChainFile ) || ( -z $allChainFile ) );
+    my $allChainFile = "$parameters{outDir}/all.chain";
+    if ( defined $parameters{allChain} ) { $allChainFile = $parameters{allChain}; }
+    else {
+        print STDERR "collect all chain files...\n";
+        print LOG "collect all chain files...\n";
+        print LOG "find $parameters{chainDir} -name \"*.chain\" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile\n";
+        print STDERR `find $parameters{chainDir} -name "*.chain" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile`;
+        die ( "$allChainFile does not exist. Chainning not succesful?\n" ) if ( ( not -e $allChainFile ) || ( -z $allChainFile ) );
+    }
 
     my $noClassNetFile = "$parameters{outDir}/all.preNet";
     print STDERR "netting from file $allChainFile...\n";
@@ -71,14 +76,15 @@ sub main
 
 sub init 
 {
-    die $usage if ( $opt_h or ( not $opt_d ) or ( not $opt_o ) );
+    die $usage if ( $opt_h or ( ( not $opt_d ) and ( not $opt_a ) ) or ( not $opt_o ) );
 
     my %parameters = ();
 
     $parameters{targetSizes} = $opt_1;
     $parameters{querySizes} = $opt_2;
-    $parameters{chainDir} = $opt_d;
     $parameters{outDir} = $opt_o;
+    if ( defined $opt_d ) { $parameters{chainDir} = $opt_d; }
+    if ( defined $opt_a ) { $parameters{allChain} = $opt_a; }
 
     if ( defined $opt_l ) { $parameters{logFile} = $opt_l; }
     else { $parameters{logFile} = "$parameters{outDir}/netting.log"; }
