@@ -47,12 +47,12 @@ _EOH_
 sub main
 {
     &init ();
-    if ( $_debug ) { print STDERR "\nInitialized..\n"; foreach my $key ( keys %config ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
+    if ( $_debug ) { print STDERR "\nInitialized..\n"; foreach my $key ( sort { $a cmp $b } ( keys %config ) ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
 
     &checkForGenomeFasta ();
     &checkForGenome2Bit ();
     &checkForChrAndSize ();
-    if ( $_debug ) { print STDERR "\n\nFiles ready..\n"; foreach my $key ( keys %config ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
+    if ( $_debug ) { print STDERR "\nFiles ready..\n"; foreach my $key ( sort { $a cmp $b } ( keys %config ) ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
 
     print STDERR "\n$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n";
     print STDERR `$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n`;
@@ -69,7 +69,12 @@ sub main
     }
     else { die "Error in chainning\n"; }
 
-    if ( not $? ) { print STDERR "genome alignment successful! Check for over.chain file in $config{outDir}\n\tTime: ", `date`; }
+    if ( not $? ) { 
+        print STDERR "genome alignment successful! Check for over.chain file in $config{outDir}\n\tTime: ", `date`; 
+        print STDERR "Now swap the two species in the over.chain file to get reverse.over.chain:\n";
+        print STDERR `$config{UCSC_TOOLS}/chainSwap $config{outDir}/over.chain $config{outDir}/reverse.over.chain`;
+
+    }
     else { die "Error in netting\n"; }
 
     1;
