@@ -47,11 +47,12 @@ _EOH_
 sub main
 {
     &init ();
-    if ( $_debug ) { foreach my $key ( keys %config ) { print $key, "\t", $config{$key}, "\n"; }  }
+    if ( $_debug ) { print STDERR "\nInitialized..\n"; foreach my $key ( keys %config ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
 
     &checkForGenomeFasta ();
     &checkForGenome2Bit ();
     &checkForChrAndSize ();
+    if ( $_debug ) { print STDERR "\n\nFiles ready..\n"; foreach my $key ( keys %config ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
     if ( $_debug ) { foreach my $key ( keys %config ) { print $key, "\t", $config{$key}, "\n"; }  }
 
     print STDERR "$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n";
