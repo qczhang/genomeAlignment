@@ -200,7 +200,7 @@ sub checkForChrAndSize
     1;
 }
 
-sub checkForGenome2bit
+sub checkForGenome2Bit
 {
     if ( not defined $config{genomeTwoBit1} ) { 
         $config{genomeTwoBit1} = $config{outDir} . "/data/genome1.2bit";
