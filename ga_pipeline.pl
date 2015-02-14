@@ -53,22 +53,24 @@ sub main
     &checkForGenome2Bit ();
     &checkForChrAndSize ();
     if ( $_debug ) { print STDERR "\n\nFiles ready..\n"; foreach my $key ( keys %config ) { print STDERR $key, "\t", $config{$key}, "\n"; }  }
-    if ( $_debug ) { foreach my $key ( keys %config ) { print $key, "\t", $config{$key}, "\n"; }  }
 
-    print STDERR "$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n";
+    print STDERR "\n$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n";
     print STDERR `$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -m $config{LASTZMATRIX} -p $config{LASTZMOREOPT} -s $config{UCSC_TOOLS}/lavToPsl\n`;
 
     if ( not $? ) {
-        print STDERR "$config{SCRIPTS}/chainning.pl -i $config{genomeSize1} -1 $config{genomeTwoBit1} -2 $config{genomeTwoBit2} -d $config{outDir}/psl -o $config{outDir} -a $config{UCSC_TOOLS}/axtChain -p $config{AXTCHAINOPT} -t $config{UCSC_TOOLS}/chainAntiRepeat\n";
+        print STDERR "\n$config{SCRIPTS}/chainning.pl -i $config{genomeSize1} -1 $config{genomeTwoBit1} -2 $config{genomeTwoBit2} -d $config{outDir}/psl -o $config{outDir} -a $config{UCSC_TOOLS}/axtChain -p $config{AXTCHAINOPT} -t $config{UCSC_TOOLS}/chainAntiRepeat\n";
         print STDERR `$config{SCRIPTS}/chainning.pl -i $config{genomeSize1} -1 $config{genomeTwoBit1} -2 $config{genomeTwoBit2} -d $config{outDir}/psl -o $config{outDir} -a $config{UCSC_TOOLS}/axtChain -p $config{AXTCHAINOPT} -t $config{UCSC_TOOLS}/chainAntiRepeat`;
     }
     else { die "Error in finishing lastz jobs\n"; }
 
     if ( not $? ) {
-        print STDERR "$config{SCRIPTS}/netting.pl -1 $config{genomeSize1} -2 $config{genomeSize2} -d $config{outDir}/chain -o $config{outDir} -m $config{UCSC_TOOLS}/chainMergeSort -p $config{UCSC_TOOLS}/chainPreNet -n $config{UCSC_TOOLS}/chainNet -s $config{UCSC_TOOLS}/netSyntenic -c $config{UCSC_TOOLS}/netChainSubset -t $config{UCSC_TOOLS}/chainStitchId\n";
+        print STDERR "\n$config{SCRIPTS}/netting.pl -1 $config{genomeSize1} -2 $config{genomeSize2} -d $config{outDir}/chain -o $config{outDir} -m $config{UCSC_TOOLS}/chainMergeSort -p $config{UCSC_TOOLS}/chainPreNet -n $config{UCSC_TOOLS}/chainNet -s $config{UCSC_TOOLS}/netSyntenic -c $config{UCSC_TOOLS}/netChainSubset -t $config{UCSC_TOOLS}/chainStitchId\n";
         print STDERR `$config{SCRIPTS}/netting.pl -1 $config{genomeSize1} -2 $config{genomeSize2} -d $config{outDir}/chain -o $config{outDir} -m $config{UCSC_TOOLS}/chainMergeSort -p $config{UCSC_TOOLS}/chainPreNet -n $config{UCSC_TOOLS}/chainNet -s $config{UCSC_TOOLS}/netSyntenic -c $config{UCSC_TOOLS}/netChainSubset -t $config{UCSC_TOOLS}/chainStitchId`;
     }
     else { die "Error in chainning\n"; }
+
+    if ( not $? ) { print STDERR "genome alignment successful! Check for over.chain file in $config{outDir}\n\tTime: ", `date`; }
+    else { die "Error in netting\n"; }
 
     1;
 }

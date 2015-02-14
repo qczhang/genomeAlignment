@@ -49,8 +49,8 @@ sub main
     open ( LOG, ">$parameters{logFile}" );
     print STDERR "collect all chain files...\n";
     print LOG "collect all chain files...\n";
-    print LOG "find $parameters{chainDir} -name \"*.chain\" | $parameters{mergeSort} -inputList=stdin > $allChainFile\n";
-    print STDERR `find $parameters{chainDir} -name "*.chain" | $parameters{mergeSort} -inputList=stdin > $allChainFile`;
+    print LOG "find $parameters{chainDir} -name \"*.chain\" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile\n";
+    print STDERR `find $parameters{chainDir} -name "*.chain" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile`;
     die ( "$allChainFile does not exist. Chainning not succesful?\n" ) if ( ( not -e $allChainFile ) || ( -z $allChainFile ) );
 
     my $noClassNetFile = "$parameters{outDir}/all.preNet";
@@ -77,7 +77,6 @@ sub init
 
     $parameters{targetSizes} = $opt_1;
     $parameters{querySizes} = $opt_2;
-
     $parameters{chainDir} = $opt_d;
     $parameters{outDir} = $opt_o;
 
