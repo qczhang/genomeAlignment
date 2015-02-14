@@ -18,7 +18,7 @@ my $count = 0; my $chr = ""; my $len = 0;  my $first = 1;  my $outFile = "NULL";
 open ( GN, $genome );
 while ( my $line = <GN> ) {
     $count++;
-    print STDERR $count, "\n" if ( $count % 1000000 == 0 );
+    #print STDERR $count, "\n" if ( $count % 1000000 == 0 );
 
     if ( $line =~ /^>/ ) {
         print $chr, "\t", $len, "\n" if ( $len );

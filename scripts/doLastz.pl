@@ -7,8 +7,8 @@ use strict;
 use warnings;
 use Getopt::Std;
 
-use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_o $opt_p $opt_m $opt_r $opt_l $opt_z $opt_s );
-&getopts('hVD1:2:o:p:m:l:z:s:r');
+use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_o $opt_p $opt_r $opt_l $opt_z $opt_s );
+&getopts('hVD1:2:o:p:l:z:s:r');
 
 my $usage = <<_EOH_;
 Run lastz for two genomes...
@@ -23,9 +23,8 @@ $0 -1 fasta_list_1 -2 fasta_list_2 -o output_directory
 
 # more options
  -z   lastz binary
- -m   matrix
- -p   options in running Lastz
  -s   lav to psl binary
+ -p   options in running Lastz
 
  -l   log file
  -r   remote running (not yet)
@@ -45,13 +44,9 @@ sub main
     my $ref_fastaList1 = readFastaList ( $parameters{fastaList1} );
     my $ref_fastaList2 = readFastaList ( $parameters{fastaList2} );
 
-    my $lastzOptions = "";
-    if ( defined $parameters{matrix} ) { $lastzOptions .= "Q=$parameters{matrix}"; }
-    if ( defined $parameters{moreLastzOptions} ) { $lastzOptions .= " $parameters{moreLastzOptions}"; }
-
     open ( LOG, ">$parameters{logFile}" );
-    print STDERR "Running lastz jobs using options: \n\t$lastzOptions\n";
-    print LOG "Running lastz jobs using options: \n\t$lastzOptions\n";
+    print STDERR "Running lastz jobs using options: \n\t$parameters{lastzOptions}\n";
+    print LOG "Running lastz jobs using options: \n\t$parameters{lastzOptions}\n";
 
     my $countTotalPercent = scalar ( keys %{$ref_fastaList1} );
     my $count = 0; my $lastPerc = 0;
@@ -71,9 +66,10 @@ sub main
 
         my $outputLav = $parameters{outputDir} . "/lav/" . $fastaName1 . ".lav";
         my $outputPsl = $parameters{outputDir} . "/psl/" . $fastaName1 . ".psl";
-        my $lastzCmd = "$parameters{lastzBin} $fasta1 $fasta2 $lastzOptions > $outputLav";
+        my $lastzCmd = "$parameters{lastzBin} $fasta1 $fasta2 $parameters{lastzOptions} > $outputLav";
         if ( not $parameters{remote} ) {
             print LOG "\n$lastzCmd\n\tTime: ", `date`;
+            die;
             print LOG `$lastzCmd`;
             if ( not $? ) { 
                 print LOG "Job successful, check $outputLav for output alignment. \n"; 
@@ -118,8 +114,8 @@ sub init
     else { $parameters{lastzBin} = "lastz";  } ## check availability of binary lastz
     if ( defined $opt_s ) { $parameters{lavToPslBin} = $opt_s; }
     else { $parameters{lastzBin} = "lavToPsl";  } ## check availability of binary lavToPsl
-    if ( defined $opt_m ) { $parameters{matrix} = $opt_m; }
-    if ( defined $opt_p ) { $parameters{moreLastzOptions} = $opt_p; }
+    if ( defined $opt_p ) { $parameters{lastzOptions} = $opt_p; }
+    else { $parameters{lastzOptions} = ""; }
 
     if ( defined $opt_l ) { $parameters{logFile} = $opt_l; }
     else { $parameters{logFile} = "$parameters{outputDir}/doLastz.log"; }
