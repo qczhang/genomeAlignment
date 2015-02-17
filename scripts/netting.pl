@@ -51,23 +51,23 @@ sub main
     my $allChainFile = "$parameters{outDir}/all.chain";
     if ( defined $parameters{allChain} ) { $allChainFile = $parameters{allChain}; }
     else {
-        print STDERR "collect all chain files...\n";
-        print LOG "collect all chain files...\n";
+        print STDERR "Collect all chain files...\n\t", `date`;
+        print LOG "Collect all chain files...\n\t", `date`;
         print LOG "find $parameters{chainDir} -name \"*.chain\" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile\n";
         print STDERR `find $parameters{chainDir} -name "*.chain" | $parameters{mergeSortBin} -inputList=stdin > $allChainFile`;
         die ( "$allChainFile does not exist. Chainning not succesful?\n" ) if ( ( not -e $allChainFile ) || ( -z $allChainFile ) );
     }
 
     my $noClassNetFile = "$parameters{outDir}/all.preNet";
-    print STDERR "netting from file $allChainFile...\n";
-    print LOG "netting from file $allChainFile...\n";
+    print STDERR "\nNetting from file $allChainFile...\n\t", `date`;
+    print LOG "\nNetting from file $allChainFile...\n\t", `date`;
     print LOG "$parameters{preNetBin} $allChainFile $parameters{targetSizes} $parameters{querySizes} stdout | $parameters{netBin} stdin -minSpace=1 $parameters{targetSizes} $parameters{querySizes} stdout /dev/null | $parameters{netSynBin} stdin $noClassNetFile\n";
     print LOG `$parameters{preNetBin} $allChainFile $parameters{targetSizes} $parameters{querySizes} stdout | $parameters{netBin} stdin -minSpace=1 $parameters{targetSizes} $parameters{querySizes} stdout /dev/null | $parameters{netSynBin} stdin $noClassNetFile`;
     die ( "$noClassNetFile does not exist. Netting not succesful?\n" ) if ( ( not -e $noClassNetFile ) || ( -z $noClassNetFile ) );
 
     my $overChainFile = "$parameters{outDir}/over.chain";
-    print STDERR "finalizing over chain file...\n";
-    print LOG "finalizing over chain file...\n";
+    print STDERR "\nFinalizing over chain file...\n\t", `date`;
+    print LOG "\nFinalizing over chain file...\n\t", `date`;
     print LOG "$parameters{netChainBin} -verbose=0 $noClassNetFile $allChainFile stdout | $parameters{stitchBin} stdin $overChainFile\n";
     print LOG `$parameters{netChainBin} -verbose=0 $noClassNetFile $allChainFile stdout | $parameters{stitchBin} stdin $overChainFile`;
     die ( "$overChainFile does not exist. Overchainning not succesful?\n" ) if ( ( not -e $overChainFile ) || ( -z $overChainFile ) );

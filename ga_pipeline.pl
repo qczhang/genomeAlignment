@@ -11,8 +11,8 @@ use Getopt::Std;
 my $_debug = 1;
 my %config = ();
 
-use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_o $opt_c $opt_a $opt_b $opt_A $opt_B $opt_s $opt_t $opt_j );
-&getopts('hVD1:2:o:c:a:b:A:B:s:t:j:');
+use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_o $opt_c $opt_a $opt_b $opt_A $opt_B $opt_s $opt_t $opt_j $opt_r );
+&getopts('hVD1:2:o:c:a:b:A:B:s:t:j:r');
 
 my $usage = <<_EOH_;
 ## --------------------------------------
@@ -40,6 +40,7 @@ $0 -1 genome1_file -2 genome2_file -o output_directory
         set parameters for lastz, chaining and others
         
  -j     job [all(default)|prepare|lastz|chainning|netting]
+ -r     run job remotely
 
 _EOH_
 ;
@@ -57,8 +58,9 @@ sub main
     if ( $_debug ) { print STDERR "Files are ready.\n\n"; print STDERR &printConfigure(), "\n"; }
 
     if ( defined $config{job}{lastz} ) {
-        print STDERR "\n$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -p $config{LASTZOPT} -s $config{UCSC_TOOLS}/lavToPsl\n";
-        print STDERR `$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -p $config{LASTZOPT} -s $config{UCSC_TOOLS}/lavToPsl`;
+        my $remote = ( defined $config{remote} ) ? "-r " : "";
+        print STDERR "\n$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -p $config{LASTZOPT} -s $config{UCSC_TOOLS}/lavToPsl $remote\n";
+        print STDERR `$config{SCRIPTS}/doLastz.pl -1 $config{list1} -2 $config{list2} -o $config{outDir} -z $config{LASTZ}/lastz -p $config{LASTZOPT} -s $config{UCSC_TOOLS}/lavToPsl $remote`;
     }
 
     if ( not $? ) {
@@ -152,6 +154,8 @@ sub init
         }
     }
     else { foreach my $aj ( keys %allJobs ) { $config{job}{$aj} = 1; } }
+    if ( defined $opt_r ) { $config{remote} = 1; } 
+
     1;
 }
 

@@ -7,8 +7,8 @@ use strict;
 use warnings;
 use Getopt::Std;
 
-use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_o $opt_p $opt_r $opt_l $opt_z $opt_s );
-&getopts('hVD1:2:o:p:l:z:s:r');
+use vars qw ($opt_h $opt_V $opt_D $opt_1 $opt_2 $opt_o $opt_p $opt_r $opt_l $opt_z $opt_s $opt_b );
+&getopts('hVD1:2:o:p:l:z:s:b:r');
 
 my $usage = <<_EOH_;
 Run lastz for two genomes...
@@ -28,6 +28,7 @@ $0 -1 fasta_list_1 -2 fasta_list_2 -o output_directory
 
  -l   log file
  -r   remote running (not yet)
+ -b   number of lastz jobs in a batch 
 
 # example
  ./doLastz.pl -1 ~/lib/fasta/hg19.file -2 ~/lib/fasta/panTro4.file -o results/hg19_pt4/
@@ -48,8 +49,10 @@ sub main
     print STDERR "Running lastz jobs using options: \n\t$parameters{lastzOptions}\n";
     print LOG "Running lastz jobs using options: \n\t$parameters{lastzOptions}\n";
 
-    my $countTotalPercent = scalar ( keys %{$ref_fastaList1} );
-    my $count = 0; my $lastPerc = 0;
+    my $count = 0; my $lastPerc = 0; my $countTotalPercent = scalar ( keys %{$ref_fastaList1} );
+    my $batch = 0; if ( ( $countTotalPercent > 1000 ) and ( not defined $parameters{batch} ) ) { $parameters{batch} = 1000; }
+
+    my $lastzCmd = "";
     foreach my $fastaName1 ( sort { $a cmp $b } ( keys ( %{$ref_fastaList1} ) ) ) {
         next if ( $fastaName1 eq "genome" );
 
@@ -66,10 +69,9 @@ sub main
 
         my $outputLav = $parameters{outputDir} . "/lav/" . $fastaName1 . ".lav";
         my $outputPsl = $parameters{outputDir} . "/psl/" . $fastaName1 . ".psl";
-        my $lastzCmd = "$parameters{lastzBin} $fasta1 $fasta2 $parameters{lastzOptions} > $outputLav";
         if ( not $parameters{remote} ) {
+            $lastzCmd = "$parameters{lastzBin} $fasta1 $fasta2 $parameters{lastzOptions} > $outputLav";
             print LOG "\n$lastzCmd\n\tTime: ", `date`;
-            die;
             print LOG `$lastzCmd`;
             if ( not $? ) { 
                 print LOG "Job successful, check $outputLav for output alignment. \n"; 
@@ -87,15 +89,42 @@ sub main
             }
         }
         else {
-            $lastzCmd .= "\ntouch $outputLav.done\n\n";
+            $lastzCmd .= "$parameters{lastzBin} $fasta1 $fasta2 $parameters{lastzOptions} > $outputLav";
+            $lastzCmd .= "\nstatus=\$\?";
+            $lastzCmd .= "\nif [ \$status -eq 0 ] \n    then touch $outputLav.done \nfi";
             $lastzCmd .= "\n$parameters{lavToPslBin} $outputLav $outputPsl";
-            $lastzCmd .= "\ntouch $outputLav.done\n";
-            my $lastzJobSubmitted = $parameters{outputDir} . "/lastz_shell/" . $fastaName1 . ".sh.submitted";
-            my $lastzJobName = "$fastaName1.lastz";  my $lastzJobMemory = "4G";  my $lastzJobTime = "3:00:00";
-            my $lastzScriptFile = $parameters{outputDir} . "/lastz_shell/" . $fastaName1 . ".sh";
-            #remoteCommand( $lastzJobName, $lastzJobMemory, $lastzJobTime, $lastzScriptFile, $lastzCmd, $lastzJobSubmitted );
+            $lastzCmd .= "\nstatus=\$\?";
+            $lastzCmd .= "\nif [ \$status -eq 0 ] \n    then touch $outputPsl.done \nfi\n\n";
+
+            my $jobLabel = $fastaName1;
+            if ( defined $parameters{batch} ) {
+                if  ( $count % $parameters{batch} != 0 ) { next; }
+                else {
+                    $batch++;
+                    $jobLabel = "jobBatch." . $batch;
+                }
+            }
+
+            my $lastzJobName = "$jobLabel.lastz";
+            my $lastzScriptFile = $parameters{outputDir} . "/lastz_shell/" . $jobLabel . ".sh";
+            my $lastzJobSubmitted = $parameters{outputDir} . "/lastz_shell/" . $jobLabel . ".sh.submitted";
+            my $lastzJobMemory = "10G";  my $lastzJobTime = "168:00:00";
+            remoteCommand( $lastzJobName, $lastzJobMemory, $lastzJobTime, $lastzScriptFile, $lastzCmd, $lastzJobSubmitted );
+            $lastzCmd = "";
         }
     }
+
+    if ( ( defined $parameters{batch} ) and ( $count % $parameters{batch} != 0 ) ) { 
+        $batch++;
+        my $jobLabel = "jobBatch." . $batch;
+        my $lastzJobName = "$jobLabel.lastz";
+        my $lastzScriptFile = $parameters{outputDir} . "/lastz_shell/" . $jobLabel . ".sh";
+        my $lastzJobSubmitted = $parameters{outputDir} . "/lastz_shell/" . $jobLabel . ".sh.submitted";
+        my $lastzJobMemory = "10G";  my $lastzJobTime = "168:00:00";
+        remoteCommand( $lastzJobName, $lastzJobMemory, $lastzJobTime, $lastzScriptFile, $lastzCmd, $lastzJobSubmitted );
+    }
+
+    1;
 }
 
 sub init 
@@ -123,9 +152,10 @@ sub init
     if ( defined $opt_r ) { 
         $parameters{remote} = 1; 
         mkdir ( "$parameters{outputDir}/lastz_shell" ) if ( not -e "$parameters{outputDir}/lastz_shell" );
+        if ( defined $opt_b ) { $parameters{batch} = $opt_b }
 
-        $parameters{remote} = 0; 
-        print STDERR `echo "not yet implemented. still running in local" > $parameters{outputDir}/lastz_shell/note`;
+        #    $parameters{remote} = 0; 
+        #    print STDERR `echo "not yet implemented. still running in local" > $parameters{outputDir}/lastz_shell/note`;
     }
 
     return ( %parameters );
@@ -158,6 +188,34 @@ sub readFastaList {
 
     return \%fasta;
 }
+
+sub remoteCommand {
+    my ( $jobName, $jobMemory, $jobTime, $scriptFile, $cmd, $jobSubmittedTag, $largeJob ) = @_;
+
+    open ( SH, ">$scriptFile" ) or die "Cannot open script file $scriptFile for writing.\n";
+    print SH "#! /bin/bash\n\n";
+    print SH "source ~/.bash_profile\n\n";
+    print SH $cmd, "\n\n";
+
+    my $isLargeJob = ""; if ( ( defined $largeJob ) and $largeJob ) { $isLargeJob = " -P large_mem" }
+
+    if ( defined $jobSubmittedTag ) {
+        if ( $jobSubmittedTag ) {
+            print STDERR `qsub -cwd -N $jobName $isLargeJob -l h_vmem=$jobMemory -l h_rt=$jobTime -m ea -w e $scriptFile`;
+            #print STDERR `qsub -cwd -N $jobName -l h_vmem=$jobMemory -l h_rt=$jobTime -m ea -M qczhang\@stanford.edu -w e $scriptFile`;
+            ## there must be a simple way to check the submit status and the return of the job id
+            print STDERR `touch $jobSubmittedTag`;
+        }
+        else {
+            print STDERR "please submit the job using the following command:\n";
+            print STDERR "qsub -cwd -N $jobName $isLargeJob -l h_vmem=$jobMemory -l h_rt=$jobTime -m ea -w e $scriptFile\n";
+        }
+    }
+    else { print STDERR `qsub -cwd -N $jobName $isLargeJob -l h_vmem=$jobMemory -l h_rt=$jobTime -m ea -w e $scriptFile`; }
+
+    1;
+}
+
 
 ## obsolete
 sub _estimateTotal
